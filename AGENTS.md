@@ -7,7 +7,8 @@ repository.
 
 A personal collection of game-server eggs for the [Pelican](https://pelican.dev) panel, with
 Pterodactyl compatibility variants. No build system, no package manifest, no test suite, no
-linter, no CI — don't go looking for one. The only executable code in the repo is
+application linter. CI now validates exports, paired behavior and the INI helper;
+see `CI.md` and `.github/scripts/`. The only shipped executable code in the repo is
 `games-steamcmd/humanitz/ini-merge.sh`; everything else is panel export data and prose.
 
 ## Layout
