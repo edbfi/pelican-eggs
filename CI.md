@@ -24,9 +24,12 @@ remain manual checks. Generated export corrections must also be reflected in the
 source panel to survive re-export. Upstream paths and container choices remain
 unchanged by CI adoption.
 
-No branch protections or rulesets are configured; automerge remains off.
-Manually review exact head/base, full diff, author/DCO, every expected CI job and
-relevant artifacts before merging through the maintainer ghmerge function.
+Renovate updates merge automatically after every required CI job passes
+on the current revision, including major and shared-policy updates. The checked
+merge action verifies genuine author sign-offs and dispatches final CI for the
+exact merged commit. No dashboard approval, branch protections or rulesets are
+configured; native GitHub automerge stays disabled. Other changes retain full
+manual review and the maintainer's `ghmerge` process.
 
 HumanitZ also runs `check-pair.py` with the same uv environment to compare startup,
 config, installation, file denylist and variable behavior across its two formats.
