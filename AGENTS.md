@@ -7,7 +7,8 @@ repository.
 
 A personal collection of game-server eggs for the [Pelican](https://pelican.dev) panel, with
 Pterodactyl compatibility variants. No build system, no package manifest, no test suite, no
-linter, no CI — don't go looking for one. The only executable code in the repo is
+application linter. CI now validates exports, paired behavior and the INI helper;
+see `CI.md` and `.github/scripts/`. The only shipped executable code in the repo is
 `games-steamcmd/humanitz/ini-merge.sh`; everything else is panel export data and prose.
 
 ## Layout
@@ -50,7 +51,7 @@ and not in the panel is lost on the next export — flag that when you hand-edit
 The HumanitZ install script `curl`s it by absolute URL off `main`:
 
 ```
-https://raw.githubusercontent.com/engels74/pelican-eggs/refs/heads/main/games-steamcmd/humanitz/ini-merge.sh
+https://raw.githubusercontent.com/edbfi/pelican-eggs/refs/heads/main/games-steamcmd/humanitz/ini-merge.sh
 ```
 
 - Moving or renaming the file breaks installs on live `main` immediately. If the path must change,
