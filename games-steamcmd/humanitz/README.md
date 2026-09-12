@@ -40,3 +40,9 @@ This egg exposes only a **curated core** of `GameServerSettings.ini` as panel va
 The installer fetches the repository-maintained `ini-merge.sh` helper, which runs on every boot (and on install/reinstall). It adds only keys that exist in `REF_GameServerSettings.ini` but are missing from your live config, using the reference default. Existing keys, including your edits and custom keys, are never touched. So new settings from a SteamCMD update appear automatically at their upstream default, ready to tweak, and nothing you changed is lost.
 
 **Upgrading an existing server to this egg:** import/update the egg in the panel, then **reinstall the server once** so the helper script is written and the new startup command takes effect. A reinstall re-runs SteamCMD over the existing files and normally leaves your `GameServerSettings.ini` and saves intact, but **back up your world/save files first** as a precaution. Fresh installs need no extra steps.
+
+### Repository download URL
+
+Both exports now download `ini-merge.sh` from `edbfi/pelican-eggs`. Update the egg
+in your source panel too, so a later export retains this URL. Existing server
+files are unchanged until you apply the updated egg and reinstall as described above.

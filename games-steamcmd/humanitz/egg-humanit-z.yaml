@@ -107,7 +107,7 @@ scripts:
       ## It runs on every boot via the startup command; running it here keeps
       ## installs and reinstalls in sync immediately.
       INI_MERGE_TMP="$(mktemp)" || { echo "Failed to create temporary file for ini-merge.sh"; exit 1; }
-      if ! curl -fsSL --retry 3 -o "$INI_MERGE_TMP" https://raw.githubusercontent.com/engels74/pelican-eggs/refs/heads/main/games-steamcmd/humanitz/ini-merge.sh; then
+      if ! curl -fsSL --retry 3 -o "$INI_MERGE_TMP" https://raw.githubusercontent.com/edbfi/pelican-eggs/refs/heads/main/games-steamcmd/humanitz/ini-merge.sh; then
           echo "Failed to download ini-merge.sh"
           rm -f "$INI_MERGE_TMP"
           exit 1
