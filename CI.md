@@ -24,7 +24,7 @@ remain manual checks. Generated export corrections must also be reflected in the
 source panel to survive re-export. Upstream paths and container choices remain
 unchanged by CI adoption.
 
-Shared actions, workflows and presets use immutable `v3.0.0` references.
+Shared actions, workflows and presets use immutable `v3.0.1` references.
 Renovate is the sole ongoing dependency merge owner. Direct automerge remains
 explicitly disabled, including matching package rules, until the hosted rollout
 proves native Renovate operation behind complete required CI. The legacy Actions
