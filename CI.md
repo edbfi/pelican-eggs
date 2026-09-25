@@ -13,8 +13,7 @@ as Wings does before execution; Bash parses with extglob enabled, and ash script
 use BusyBox ash. Parsing never downloads or installs a game server.
 
 The shared `ci / required` gate rejects failed, cancelled, missing or skipped
-prerequisites and checks explicit PR dispatch identities before and after checks.
-Tokens are read-only and action references use full version tags. Shared changes
+prerequisites. Tokens are read-only and action references use full version tags. Shared changes
 arrive as version updates from `edbfi/automation`; repository checks remain
 local so panel-specific behavior can evolve independently.
 
@@ -24,16 +23,19 @@ remain manual checks. Generated export corrections must also be reflected in the
 source panel to survive re-export. Upstream paths and container choices remain
 unchanged by CI adoption.
 
-Shared actions, workflows and presets use immutable `v3.0.1` references.
-Renovate is the sole ongoing dependency merge owner. It merges eligible dependency
-PRs by rebasing only after current required CI and policy checks pass. Native
-platform automerge stays off. Shared Renovate policy updates remain manual;
+Shared actions, workflows and presets use immutable `v4.0.0` references.
+Renovate is the sole ongoing dependency merge owner. Through the shared
+`automerge.json` preset it arms GitHub auto-merge with the rebase strategy, and
+GitHub merges only after every required CI and policy check passes on the
+current head. Shared Renovate policy updates remain manual;
 release-age rules, holds and repository-specific updater ownership still apply.
 The legacy Actions merger and its comment commands are retired.
 
 The separate PR policy workflow verifies Conventional Commit titles, genuine
 matching author sign-offs, Renovate provenance, holds, outstanding review requests
-and unresolved changes requests. Require its actual emitted policy context alongside
+and unresolved changes requests. After a pass, policy re-runs the other event's
+older failed verdict for the same head (`actions: write`), so a withdrawn
+objection clears without a manual re-run. Require its actual emitted policy context alongside
 all existing application/content checks, pinned to GitHub Actions, with strict
 up-to-date branch protection. Preserve stronger review requirements. Explicit CI
 dispatches do not substitute for a missing metadata policy result. Review exact
