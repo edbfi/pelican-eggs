@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Game-server eggs for the Pelican panel, each with a Pterodactyl variant. There is no build or package manifest. The content is panel export data plus one shipped helper, `games-steamcmd/humanitz/ini-merge.sh`.
 
-## Commands (from `.github/workflows/ci.yml`)
+## Local commands
 
 ```bash
 uv run --no-project --with-requirements .github/requirements.txt python .github/scripts/check-eggs.py   # every tracked export
@@ -50,7 +50,7 @@ Both HumanitZ install scripts download it with `curl` from `https://raw.githubus
 
 ## Commits
 
-Use Conventional Commits, scoped to the egg slug for egg changes (`feat(humanitz): ...`). PR commits carry a `Signed-off-by` matching the author (`git commit -s`), which the PR policy workflow checks.
+Use Conventional Commits, scoped to the egg slug for egg changes (`feat(humanitz): ...`). PR commits carry a `Signed-off-by` matching the author (`git commit -s`).
 
 ## Reference docs
 
