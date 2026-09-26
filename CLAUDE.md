@@ -54,5 +54,4 @@ Use Conventional Commits, scoped to the egg slug for egg changes (`feat(humanitz
 
 ## Reference docs
 
-- `CI.md`: what CI validates and how the Renovate automerge and PR policy work. Read before changing workflows, `renovate.json` or the check scripts.
 - `games-steamcmd/humanitz/README.md`: ports, which `GameServerSettings.ini` keys are deliberately left out of the panel variables, and the one-time reinstall existing servers need. Read before changing HumanitZ variables, `config.files` mappings or merge behaviour.
