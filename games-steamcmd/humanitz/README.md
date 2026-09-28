@@ -41,6 +41,10 @@ The installer fetches the repository-maintained `ini-merge.sh` helper, which run
 
 **Upgrading an existing server to this egg:** import/update the egg in the panel, then **reinstall the server once** so the helper script is written and the new startup command takes effect. A reinstall re-runs SteamCMD over the existing files and normally leaves your `GameServerSettings.ini` and saves intact, but **back up your world/save files first** as a precaution. Fresh installs need no extra steps.
 
+### Egg updates
+
+The Pelican export's `update_url` points at `egg-humanitz.yaml` on `main`. Pelican checks it daily and shows an **Update** button when the file differs from the egg in your panel. Updating overwrites any panel-side edits to the egg. Set the same URL under **Admin → Eggs → HumanitZ → Update URL**, otherwise the next export from your panel writes `null` back.
+
 ### Repository download URL
 
 Both exports now download `ini-merge.sh` from `edbfi/pelican-eggs`. Update the egg

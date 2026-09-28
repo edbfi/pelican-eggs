@@ -51,6 +51,12 @@ A variant gets its own slug with the variant as a suffix (`icarus-proton`). Pane
 
 Do not rename an existing egg folder that a published install script fetches from, such as `humanitz/` for `ini-merge.sh`. Eggs already imported into panels keep the old URL.
 
+## `update_url`
+
+In each Pelican export, `meta.update_url` points at that same file on `main`: `https://raw.githubusercontent.com/edbfi/pelican-eggs/refs/heads/main/games-steamcmd/<slug>/egg-<slug>.yaml`. Pelican fetches it daily, compares it with the whole egg, and offers an Update that replaces the egg with the file, including its `update_url`. A URL that doesn't point at the file itself either turns updates off after one update (`null` in the file) or leaves the egg flagged "update available" forever. Renaming or moving an export means updating its `update_url` in the same commit.
+
+Keep `update_url: null` in the Pterodactyl exports. Pterodactyl never fetches it, and a Pelican panel that imported the JSON would compare its own export format with `PTDL_v2` and never match.
+
 ## Adding an egg
 
 1. Create `games-steamcmd/<slug>/` containing `README.md`, `egg-<slug>.yaml` and `egg-pterodactyl-<slug>.json` (see `games-steamcmd/humanitz/` and [Naming](#naming)).
