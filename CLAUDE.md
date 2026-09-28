@@ -18,7 +18,7 @@ A behavioural change (startup command, `config.files`/`startup`/`logs`/`stop`, i
 | Concern | `egg-*.yaml` (Pelican) | `egg-pterodactyl-*.json` |
 |---|---|---|
 | Env interpolation in `config.files` | `{{server.environment.VAR}}` | `{{server.build.env.VAR}}` |
-| Startup command | `startup_commands.Default` | `startup` (plain string) |
+| Startup command | `startup_commands.<name>` (`Default`, or e.g. `Proton`) | `startup` (plain string) |
 | `config.files` / `startup` / `logs` | native YAML mappings | JSON-encoded strings (escaped, `\/` slashes) |
 | Variable `rules` | YAML list | pipe string (`"required\|numeric"`) |
 | Per-variable extras | `sort:` | `field_type: "text"`, no `sort` |
@@ -36,9 +36,24 @@ Both HumanitZ install scripts download it with `curl` from `https://raw.githubus
 - It must never block boot or clobber player edits. Keep its contract: `set -u` without `set -e`, every failure path logs and exits 0, writes go through `mktemp` plus `.bak` plus atomic `mv`, and it only ever adds missing keys. To change behaviour, keep those failure paths and add a case to `tests/test_ini_merge.py`.
 - A helper shipped with an egg must appear in `file_denylist` in both exports.
 
+## Naming
+
+One slug per egg: lowercase, hyphen-separated, and identical in the folder name and both file names.
+
+```
+games-steamcmd/<slug>/
+├── README.md
+├── egg-<slug>.yaml                # Pelican
+└── egg-pterodactyl-<slug>.json    # Pterodactyl
+```
+
+A variant gets its own slug with the variant as a suffix (`icarus-proton`). Panel exports are named after the egg's display name (`HumanitZ` exports as `egg-humanit-z.yaml`), so rename a fresh export to the repo slug before committing it.
+
+Do not rename an existing egg folder that a published install script fetches from, such as `humanitz/` for `ini-merge.sh`. Eggs already imported into panels keep the old URL.
+
 ## Adding an egg
 
-1. Create `games-steamcmd/<slug>/` containing `README.md`, `egg-<slug>.yaml` and `egg-pterodactyl-<slug>.json` (see `games-steamcmd/humanitz/`).
+1. Create `games-steamcmd/<slug>/` containing `README.md`, `egg-<slug>.yaml` and `egg-pterodactyl-<slug>.json` (see `games-steamcmd/humanitz/` and [Naming](#naming)).
 2. Add a row to the `## Eggs` table in the root `README.md`.
 3. List any shipped helper in `file_denylist` in both exports.
 
