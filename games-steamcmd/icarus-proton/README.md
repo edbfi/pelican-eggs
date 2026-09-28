@@ -16,7 +16,7 @@ This egg is built from the upstream `pelican-eggs/games-steamcmd` Icarus egg. Th
 | Launcher | `wine` | `xvfb-run -a proton run`, with `SteamAppId`/`SteamGameId` set to `1149460` (the Icarus game app) |
 | Save location | default | `-UserDir="Z:/home/container/Icarus"`, so saves, config and logs stay under `/home/container/Icarus/Saved` |
 | Process handling | `tail` on the log | `tail` on the log, then `wait` on the server PID |
-| `update_url` | upstream egg | `null`, so a panel update check cannot replace this egg with the Wine one |
+| `update_url` (Pelican) | upstream egg | this file on `edbfi/pelican-eggs` `main`, so a panel update cannot replace this egg with the Wine one |
 
 ## Server Ports
 
@@ -28,5 +28,11 @@ This egg is built from the upstream `pelican-eggs/games-steamcmd` Icarus egg. Th
 ### Notes
 
 The game port is the server's primary allocation. The query port is set by the `QUERY_PORT` variable.
+
+## Egg updates
+
+The Pelican export's `update_url` points at `egg-icarus-proton.yaml` on `main`. Pelican checks it daily and shows an **Update** button when the file differs from the egg in your panel. Updating overwrites any panel-side edits to the egg. Set the same URL under **Admin → Eggs → Icarus (Proton) → Update URL**, otherwise the next export from your panel writes `null` back.
+
+## Config
 
 The server config is `Icarus/Saved/Config/ServerSettings.ini`. The installer fetches the upstream template from RocketWerkz only if the file does not already exist.
