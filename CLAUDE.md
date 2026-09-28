@@ -64,3 +64,4 @@ Use Conventional Commits, scoped to the egg slug for egg changes (`feat(humanitz
 ## Reference docs
 
 - `games-steamcmd/humanitz/README.md`: ports, which `GameServerSettings.ini` keys are deliberately left out of the panel variables, and the one-time reinstall existing servers need. Read before changing HumanitZ variables, `config.files` mappings or merge behaviour.
+- `games-steamcmd/icarus-proton/README.md`: how this egg differs from the upstream Wine Icarus egg, and its ports.
