@@ -57,6 +57,16 @@ In each Pelican export, `meta.update_url` points at that same file on `main`: `h
 
 Keep `update_url: null` in the Pterodactyl exports. Pterodactyl never fetches it, and a Pelican panel that imported the JSON would compare its own export format with `PTDL_v2` and never match.
 
+## Refreshing exports
+
+The Pelican panel is the source and the files are its output. Prefer this flow to hand edits:
+
+1. Make the change in the panel. To load the repo version first, use **Admin → Eggs → Import → URL** with the YAML's raw URL. The import matches on `uuid` and updates the existing egg in place.
+2. Export the egg from Pelican as `.yaml`. The Export button opens `/api/application/eggs/<id>/export?format=yaml`.
+3. Convert that YAML with [Scramble](https://redthirten.github.io/scramble-egg-converter/) → **Convert to Pterodactyl**. It runs in the browser and writes `update_url: null`.
+4. Rename the results to the repo slug. Scramble names its output `pterodactyl-egg-<slug>.json`, which becomes `egg-pterodactyl-<slug>.json`.
+5. Confirm both files still have identical `scripts` blocks before committing.
+
 ## Adding an egg
 
 1. Create `games-steamcmd/<slug>/` containing `README.md`, `egg-<slug>.yaml` and `egg-pterodactyl-<slug>.json` (see `games-steamcmd/humanitz/` and [Naming](#naming)).
