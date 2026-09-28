@@ -4,11 +4,11 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2026-07-11T22:43:51+00:00",
+    "exported_at": "2026-09-28T20:58:44+00:00",
     "name": "HumanitZ",
     "author": "engels74@cccp.ps",
-    "description": "HumanitZ is a co-op, isometric, open world survival game in a world ended by the zombie outbreak. As one of the few human survivors, try to last as long as \u201chumanly\u201d possible. The past can\u2019t be changed, but you can make a difference today for the future of humanity.",
-    "features": null,
+    "description": "HumanitZ is a co-op, isometric, open world survival game in a world ended by the zombie outbreak. As one of the few human survivors, try to last as long as “humanly” possible. The past can’t be changed, but you can make a difference today for the future of humanity.",
+    "features": [],
     "docker_images": {
         "ghcr.io\/parkervcp\/steamcmd:debian": "ghcr.io\/parkervcp\/steamcmd:debian"
     },
@@ -18,7 +18,7 @@
     "startup": "[ -f .\/ini-merge.sh ] && bash .\/ini-merge.sh HumanitZServer\/REF_GameServerSettings.ini HumanitZServer\/GameServerSettings.ini || true; .\/HumanitZServer\/Binaries\/Linux\/HumanitZServer-Linux-Shipping HumanitZServer -log -port={{SERVER_PORT}} -queryport={{QUERY_PORT}} -steamservername=\"{{SERVER_NAME}}\"",
     "config": {
         "files": "{\n    \"HumanitZServer\/GameServerSettings.ini\": {\n        \"parser\": \"ini\",\n        \"find\": {\n            \"[Host Settings].ServerName\": \"{{server.build.env.SERVER_NAME}}\",\n            \"[Host Settings].Password\": \"{{server.build.env.PASSWORD}}\",\n            \"[Host Settings].SaveName\": \"{{server.build.env.SAVE_NAME}}\",\n            \"[Host Settings].SearchID\": \"{{server.build.env.SEARCH_ID}}\",\n            \"[Host Settings].AdminPass\": \"{{server.build.env.ADMIN_PASS}}\",\n            \"[Host Settings].MaxPlayers\": \"{{server.build.env.MAX_PLAYERS}}\",\n            \"[Host Settings].ReserveSlots\": \"{{server.build.env.RESERVE_SLOTS}}\",\n            \"[Host Settings].RCONEnabled\": \"{{server.build.env.RCON_ENABLED}}\",\n            \"[Host Settings].RConPort\": \"{{server.build.env.RCON_PORT}}\",\n            \"[Host Settings].RCONPass\": \"{{server.build.env.RCON_PASS}}\"\n        }\n    }\n}",
-        "startup": "{\"done\": \"Session created!\"}",
+        "startup": "{\n    \"done\": \"Session created!\"\n}",
         "logs": "{}",
         "stop": "^C"
     },
@@ -31,7 +31,7 @@
     },
     "variables": [
         {
-            "name": "Auto Update",
+            "name": "[Server] Auto Update",
             "description": "Enable automatic updates on boot",
             "env_variable": "AUTO_UPDATE",
             "default_value": "1",
@@ -41,7 +41,7 @@
             "field_type": "text"
         },
         {
-            "name": "[REQUIRED] Steam Query Port",
+            "name": "[Server] Steam Query Port",
             "description": "Steam Query Port",
             "env_variable": "QUERY_PORT",
             "default_value": "27015",
@@ -51,7 +51,7 @@
             "field_type": "text"
         },
         {
-            "name": "Server Name",
+            "name": "[Server] Server Name",
             "description": "In-game\/browser server name. Avoid the word 'Official' or the server may not list.",
             "env_variable": "SERVER_NAME",
             "default_value": "HumanitZ [Dedicated]",
@@ -61,7 +61,7 @@
             "field_type": "text"
         },
         {
-            "name": "Server Password",
+            "name": "[Server] Server Password",
             "description": "Server join password (leave blank for none)",
             "env_variable": "PASSWORD",
             "default_value": "",
@@ -71,7 +71,7 @@
             "field_type": "text"
         },
         {
-            "name": "Save Name",
+            "name": "[Server] Save Name",
             "description": "Name of the save file for the server",
             "env_variable": "SAVE_NAME",
             "default_value": "DedicatedSaveMP",
@@ -81,7 +81,7 @@
             "field_type": "text"
         },
         {
-            "name": "Search ID",
+            "name": "[Server] Search ID",
             "description": "Server pool\/search bucket. 'HumanitZ_Dedicated' is the default public pool. A custom value hides the server from default listings (find via Search ID).",
             "env_variable": "SEARCH_ID",
             "default_value": "HumanitZ_Dedicated",
@@ -91,7 +91,7 @@
             "field_type": "text"
         },
         {
-            "name": "Admin Password",
+            "name": "[Server] Admin Password",
             "description": "Admin password. Use \/adminaccess <password> in game.",
             "env_variable": "ADMIN_PASS",
             "default_value": "",
@@ -101,7 +101,7 @@
             "field_type": "text"
         },
         {
-            "name": "Max Players",
+            "name": "[Server] Max Players",
             "description": "Maximum number of players allowed",
             "env_variable": "MAX_PLAYERS",
             "default_value": "16",
@@ -111,7 +111,7 @@
             "field_type": "text"
         },
         {
-            "name": "Reserved Slots",
+            "name": "[Server] Reserved Slots",
             "description": "Slots reserved for players listed in F_ReservedSlots.txt. 0 disables.",
             "env_variable": "RESERVE_SLOTS",
             "default_value": "0",
@@ -121,7 +121,7 @@
             "field_type": "text"
         },
         {
-            "name": "RCON Enabled",
+            "name": "[RCON] RCON Enabled",
             "description": "Enable RCON. Also enables server ping display in the browser.",
             "env_variable": "RCON_ENABLED",
             "default_value": "false",
@@ -131,7 +131,7 @@
             "field_type": "text"
         },
         {
-            "name": "RCON Port",
+            "name": "[RCON] RCON Port",
             "description": "TCP port for RCON",
             "env_variable": "RCON_PORT",
             "default_value": "8888",
@@ -141,7 +141,7 @@
             "field_type": "text"
         },
         {
-            "name": "RCON Password",
+            "name": "[RCON] RCON Password",
             "description": "RCON password",
             "env_variable": "RCON_PASS",
             "default_value": "",
