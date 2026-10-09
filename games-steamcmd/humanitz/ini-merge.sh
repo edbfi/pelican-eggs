@@ -21,7 +21,7 @@ LIVE="${2:-}"
 
 log() { printf '[ini-merge] %s\n' "$*"; }
 
-[ -n "$REF" ] && [ -n "$LIVE" ] || { log "usage: ini-merge.sh <reference.ini> <live.ini>; skipping"; exit 0; }
+if [ -z "$REF" ] || [ -z "$LIVE" ]; then log "usage: ini-merge.sh <reference.ini> <live.ini>; skipping"; exit 0; fi
 command -v awk >/dev/null 2>&1 || { log "awk not found; skipping merge"; exit 0; }
 [ -f "$REF" ]  || { log "reference '$REF' not found; nothing to merge"; exit 0; }
 
