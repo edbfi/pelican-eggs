@@ -75,9 +75,9 @@ repos:
         additional_dependencies: [PyYAML==6.0.3]
         pass_filenames: false
         always_run: true
-      # HumanitZ Pelican/Pterodactyl behavioural parity.
+      # Pelican/Pterodactyl behavioural parity of each egg.
       - id: check-pair
-        name: HumanitZ export parity
+        name: Egg export parity
         entry: python .github/scripts/check-pair.py
         language: python
         language_version: "3.14"
