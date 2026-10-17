@@ -1,17 +1,18 @@
 #!/usr/bin/env bash
-# Regenerate games-steamcmd/enshrouded/enshrouded_server.json from the current Enshrouded server.
-# The depot ships no enshrouded_server.json: the server writes one on its first start. This installs
-# the public build with SteamCMD, starts it once under the egg's Proton image without a config, and
-# writes the file it generated with the user-group passwords blanked.
+# Check that the current Enshrouded server build still has the enshrouded_server.json keys the
+# egg manages (games-steamcmd/enshrouded/README.md, "New game releases"). The depot ships no
+# config: this installs the public build with SteamCMD, starts it once under the egg's Proton
+# image without a config, checks the file it generates and writes it with the group passwords
+# blanked, for reading alongside the shipped enshrouded_server_readme.txt.
 # Needs Docker on an x86_64 Linux host and about 10 GB in WORK_DIR. Publishes no ports.
-# Usage: scripts/enshrouded-template.sh OUTPUT_JSON [WORK_DIR]
+# Usage: scripts/enshrouded-config-check.sh OUTPUT_JSON [WORK_DIR]
 set -euo pipefail
 
 out=${1:?usage: $0 OUTPUT_JSON [WORK_DIR]}
 work=${2:-$(mktemp -d)}
 installer=ghcr.io/pelican-eggs/installers:debian
 runtime=ghcr.io/pelican-eggs/steamcmd:proton
-name="enshrouded-template-$$"
+name="enshrouded-config-check-$$"
 
 mkdir -p "$work"
 work=$(cd "$work" && pwd)
@@ -39,7 +40,7 @@ docker run --rm -v "$work:/mnt/server" "$installer" bash -c '
     cp steamcmd/linux64/steamclient.so .steam/sdk64/
     chown -R 1000:1000 /mnt/server'
 
-# Start without a config so the server generates one, as the egg's startup command does.
+# Start without a config so the server generates its defaults, as the egg's startup command does.
 rm -rf "$work/enshrouded_server.json" "$work/logs"
 docker run -dit --name "$name" -v "$work:/home/container" -w /home/container "$runtime" bash -c '
     mkdir -p .steam/steam/steamapps/compatdata/2278520
@@ -56,14 +57,25 @@ if ! grep -qs "'HostOnline' (up)" "$work/logs/enshrouded_server.log"; then
 fi
 docker stop -t 30 "$name" >/dev/null
 
-# Blank the generated (random) group passwords; the installer and the panel set their own.
+# Blank the generated (random) group passwords.
 sed -E 's/^([[:space:]]*"password": )"([^"\\]|\\.)*"/\1""/' "$work/enshrouded_server.json" > "$out"
-if [ "$(grep -c '"password": ""' "$out")" -ne 4 ]; then
-    echo "Expected four blanked user-group passwords in $out" >&2
-    exit 1
-fi
 [ -z "$(tail -c1 "$out")" ] || echo >> "$out"
 
 build=$(sed -n 's/^[[:space:]]*"buildid"[[:space:]]*"\([0-9]*\)".*/\1/p' "$work/steamapps/appmanifest_2278520.acf")
 proton=$(docker run --rm --entrypoint cat "$runtime" /usr/local/bin/version)
-echo "Wrote $out from build $build (${proton##* }, $(date -u +%F)). Work dir: $work"
+echo "Wrote $out from build $build (${proton##* }). Work dir: $work"
+
+# The keys of config.files in egg-enshrouded.yaml and the installer's seed, with their JSON types.
+if docker run --rm -i "$installer" jq -e '
+        (.name | type) == "string" and (.queryPort | type) == "number"
+        and (.slotCount | type) == "number" and (.gameSettingsPreset | type) == "string"
+        and (.enableTextChat | type) == "boolean" and (.enableVoiceChat | type) == "boolean"
+        and (.voiceChatMode | type) == "string"
+        and ([.userGroups[:4][].name] == ["Admin", "Friend", "Guest", "Visitor"])
+        and ([.userGroups[:4][].password | type] == ["string", "string", "string", "string"])
+    ' < "$out" >/dev/null; then
+    echo "Every key the egg manages is present with its expected type."
+else
+    echo "The generated config no longer matches the keys the egg manages; update the egg." >&2
+    exit 2
+fi

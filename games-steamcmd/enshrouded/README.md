@@ -15,7 +15,7 @@ This egg is written from scratch; only the SteamCMD bootstrap of the install scr
 | | Upstream | This egg |
 |---|---|---|
 | Password | Writes a top-level `password`, which the server has ignored since update 2 (2024-06-05) | Sets `userGroups[].password` of the Admin, Friend, Guest and Visitor groups |
-| Config template | Pre-1.0 file without `userGroups` | The file the current server generates itself ([below](#config-template)) |
+| New config | Pre-1.0 file without `userGroups` | A seed of the managed keys that the server completes with the installed release's defaults |
 | `gamePort` | Written, although the server no longer has one | Not used; the primary allocation is `queryPort` |
 | Launch | `proton run`, which goes through Proton's `steam.exe` shim | `proton runinprefix`, which starts the exe directly |
 | Stop | `^C` kills the server within 2 s, before it saves | `^C` shuts the server down cleanly and saves the world |
@@ -79,31 +79,21 @@ The panel sets the group passwords by position, so the first four `userGroups` m
 
 ### Install and reinstall
 
-The installer creates the file from the [template](#config-template) when it is missing, with random group passwords until the first start applies the panel's. An existing file whose first four groups are the standard ones is left alone.
+When the file is missing, the installer writes a seed with only the keys the panel manages, typed as the server expects them, plus the four standard groups with random passwords. The first start applies the panel's values, and the server fills in everything else with the defaults of the installed release. The result is identical to the file the server generates on its own, apart from the passwords. An existing file whose first four groups are the standard ones is left alone.
 
 Any other existing file, for example one from the upstream egg with a single `Default` group, is backed up to `enshrouded_server.json.<timestamp>.bak` and rebuilt. Its settings, tags and bans are kept, the standard groups come first, and its other groups follow them. Upgrading from the upstream egg therefore takes one reinstall. Back up `savegame/` first anyway.
 
-## Config template
+## New game releases
 
-`enshrouded_server.json` in this directory is the file the dedicated server writes on its first start without a config. The only change is that the four group passwords are blanked. The current copy comes from server build `25988414` (public branch, 2026-10-16) under GE-Proton11-7. It matches the "DEFAULT enshrouded_server.json / VERSION 1.0.0.0" section of the shipped readme, except that the server writes `randomSpawnerAmount: "Automatic"`, which the readme lists as the 1.0 default elsewhere.
+The egg keeps no copy of `enshrouded_server.json`. The depot does not supply one either: it installs `enshrouded_server_readme.txt`, which documents every setting, but the config only comes into existence when the server starts. The server then keeps the file current on every start: it adds settings it is missing, at their defaults, and keeps existing values. With build `25988414` (GE-Proton11-7), removing `tags`, `bannedAccounts` and three 1.0 `gameSettings` keys from a file brought them back on the next start, while a changed `playerHealthFactor` stayed. A release that adds settings therefore needs nothing from the egg, for new and existing servers alike.
 
-SteamCMD does not supply this file: the depot contains `enshrouded_server_readme.txt` but no `enshrouded_server.json`. The server generates the file only when it starts, so refreshing the template means running the server once.
-
-### Refreshing it
-
-On an x86_64 Linux host with Docker and about 10 GB free:
+A release only needs an egg change if Keen renames or removes a key the egg manages, or changes the types: `name`, `queryPort`, `slotCount`, `gameSettingsPreset`, `enableTextChat`, `enableVoiceChat`, `voiceChatMode` and the first four `userGroups`. Wings would keep writing the old key and the server would drop it, so the panel setting would have no effect. To check a release, run this on an x86_64 Linux host with Docker and about 10 GB free:
 
 ```bash
-scripts/enshrouded-template.sh games-steamcmd/enshrouded/enshrouded_server.json
+scripts/enshrouded-config-check.sh /tmp/enshrouded_server.json
 ```
 
-The script installs the public build with SteamCMD into a work directory, starts it once without a config in the egg's runtime image (no ports published), stops it after `HostOnline`, and writes the generated file with blanked passwords. It prints the build ID and Proton version to record above. Review the diff before committing. A new key needs nothing else, but a renamed or removed key that the egg manages also needs an egg change. Passing a work directory as the second argument reuses an earlier install.
-
-Refresh the template after game updates that add settings. An outdated template only affects new installs, because the server adds missing keys to existing files itself.
-
-### Automating it (not implemented)
-
-A daily workflow like [icarus-bevy's release watch](https://github.com/edbfi/icarus-bevy/blob/main/.github/workflows/release-watch.yml) could compare the public build ID with the one recorded here. Reading it with `steamcmd +app_info_print 2278520` is anonymous and cheap. On a change, the workflow would open an issue. Regenerating the template in CI is feasible: a GitHub-hosted runner has Docker, and the script needs only anonymous SteamCMD. It is heavy, though: an 8 GB depot download plus the Proton image on every run. So it fits a manually dispatched job that opens a pull request better than the daily check.
+It installs the public build with SteamCMD into a work directory and starts it once without a config in the egg's runtime image, publishing no ports. It writes the generated file with blanked passwords and checks those keys. It exits 2 if any key is missing or has the wrong type. Passing a work directory as the second argument reuses an earlier install.
 
 ## Proton
 

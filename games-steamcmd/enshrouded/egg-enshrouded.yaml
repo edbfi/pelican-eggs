@@ -2,7 +2,7 @@ _comment: 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL'
 meta:
   version: PLCN_v3
   update_url: 'https://raw.githubusercontent.com/edbfi/pelican-eggs/refs/heads/main/games-steamcmd/enshrouded/egg-enshrouded.yaml'
-exported_at: '2026-10-17T23:10:13+00:00'
+exported_at: '2026-10-17T23:29:32+00:00'
 name: 'Enshrouded (Proton)'
 author: 326875205+edbfi@users.noreply.github.com
 uuid: 5720b3b5-0074-4fa2-8e68-f80e67b87c8b
@@ -96,30 +96,43 @@ scripts:
       cp -v linux64/steamclient.so ../.steam/sdk64/steamclient.so
 
       ## enshrouded_server.json
-      ## The panel sets the passwords of userGroups 0-3 by position, so those must be
-      ## Admin, Friend, Guest and Visitor. The template is the file the current server
-      ## generates on first start (see this egg's README), with its passwords blanked.
+      ## The server writes its full, current settings into this file on every start, adding any
+      ## it is missing. So the installer only seeds the keys the panel manages, with their JSON
+      ## types, and the four standard groups. The panel sets the group passwords by position:
+      ## userGroups 0-3 must stay Admin, Friend, Guest and Visitor.
       CONFIG=/mnt/server/enshrouded_server.json
-      TEMPLATE_URL=https://raw.githubusercontent.com/edbfi/pelican-eggs/refs/heads/main/games-steamcmd/enshrouded/enshrouded_server.json
       STANDARD_GROUPS='["Admin","Friend","Guest","Visitor"]'
-
-      TEMPLATE="$(mktemp)" || { echo "Failed to create a temporary file"; exit 1; }
-      if ! curl -fsSL --retry 3 -o "$TEMPLATE" "$TEMPLATE_URL" \
-          || ! jq -e --argjson groups "$STANDARD_GROUPS" '[.userGroups[].name] == $groups' "$TEMPLATE" > /dev/null; then
-          echo "Failed to download a valid enshrouded_server.json template"
-          exit 1
-      fi
 
       ## Random passwords until the panel writes its own on the first start.
       random_password() { tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 24; }
-      FRESH="$(mktemp)" || { echo "Failed to create a temporary file"; exit 1; }
-      jq --arg a "$(random_password)" --arg f "$(random_password)" --arg g "$(random_password)" --arg v "$(random_password)" \
-          '.userGroups[0].password = $a | .userGroups[1].password = $f | .userGroups[2].password = $g | .userGroups[3].password = $v' \
-          "$TEMPLATE" > "$FRESH"
+      SEED="$(mktemp)" || { echo "Failed to create a temporary file"; exit 1; }
+      jq -n --arg admin "$(random_password)" --arg friend "$(random_password)" \
+          --arg guest "$(random_password)" --arg visitor "$(random_password)" '
+          def group($name; $password; $kick; $inventories; $world; $base; $extend):
+              {name: $name, password: $password, canKickBan: $kick, canAccessInventories: $inventories,
+               canEditWorld: $world, canEditBase: $base, canExtendBase: $extend, reservedSlots: 0};
+          {
+              name: "Enshrouded Server",
+              saveDirectory: "./savegame",
+              logDirectory: "./logs",
+              ip: "0.0.0.0",
+              queryPort: 15637,
+              slotCount: 16,
+              voiceChatMode: "Proximity",
+              enableVoiceChat: false,
+              enableTextChat: false,
+              gameSettingsPreset: "Default",
+              userGroups: [
+                  group("Admin"; $admin; true; true; true; true; true),
+                  group("Friend"; $friend; false; true; true; true; false),
+                  group("Guest"; $guest; false; false; true; false; false),
+                  group("Visitor"; $visitor; false; false; false; false; false)
+              ]
+          }' > "$SEED"
 
       if [[ ! -f "$CONFIG" ]]; then
           echo "Creating enshrouded_server.json"
-          cp "$FRESH" "$CONFIG"
+          cp "$SEED" "$CONFIG"
       elif jq -e --argjson groups "$STANDARD_GROUPS" '[.userGroups[:4][].name] == $groups' "$CONFIG" > /dev/null 2>&1; then
           echo "Keeping the existing enshrouded_server.json"
       else
@@ -132,14 +145,14 @@ scripts:
                   $old[0] as $o
                   | . * ($o | del(.userGroups, .password, .gamePort))
                   | .userGroups += [($o.userGroups // [])[] | select(.name as $n | $groups | index($n) | not)]
-              ' "$FRESH" > "$CONFIG"; then
+              ' "$SEED" > "$CONFIG"; then
               echo "Merged the existing settings into the current layout"
           else
-              echo "The existing file is not valid JSON; starting from the template"
-              cp "$FRESH" "$CONFIG"
+              echo "The existing file is not valid JSON; starting from the seed"
+              cp "$SEED" "$CONFIG"
           fi
       fi
-      rm -f "$TEMPLATE" "$FRESH"
+      rm -f "$SEED"
 
       ## install end
       echo "-----------------------------------------"
