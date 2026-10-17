@@ -2,7 +2,7 @@ _comment: 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL'
 meta:
   version: PLCN_v3
   update_url: 'https://raw.githubusercontent.com/edbfi/pelican-eggs/refs/heads/main/games-steamcmd/enshrouded/egg-enshrouded.yaml'
-exported_at: '2026-10-17T23:29:32+00:00'
+exported_at: '2026-10-17T23:43:35+00:00'
 name: 'Enshrouded (Proton)'
 author: 326875205+edbfi@users.noreply.github.com
 uuid: 5720b3b5-0074-4fa2-8e68-f80e67b87c8b
@@ -103,32 +103,24 @@ scripts:
       CONFIG=/mnt/server/enshrouded_server.json
       STANDARD_GROUPS='["Admin","Friend","Guest","Visitor"]'
 
+      ## fetch the seed maintained alongside this egg.
+      SEED_TMP="$(mktemp)" || { echo "Failed to create a temporary file for the enshrouded_server.json seed"; exit 1; }
+      if ! curl -fsSL --retry 3 -o "$SEED_TMP" https://raw.githubusercontent.com/edbfi/pelican-eggs/refs/heads/main/games-steamcmd/enshrouded/enshrouded_server.json \
+          || ! jq -e --argjson groups "$STANDARD_GROUPS" '[.userGroups[].name] == $groups' "$SEED_TMP" > /dev/null; then
+          echo "Failed to download a valid enshrouded_server.json seed"
+          rm -f "$SEED_TMP"
+          exit 1
+      fi
+
       ## Random passwords until the panel writes its own on the first start.
       random_password() { tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 24; }
       SEED="$(mktemp)" || { echo "Failed to create a temporary file"; exit 1; }
-      jq -n --arg admin "$(random_password)" --arg friend "$(random_password)" \
-          --arg guest "$(random_password)" --arg visitor "$(random_password)" '
-          def group($name; $password; $kick; $inventories; $world; $base; $extend):
-              {name: $name, password: $password, canKickBan: $kick, canAccessInventories: $inventories,
-               canEditWorld: $world, canEditBase: $base, canExtendBase: $extend, reservedSlots: 0};
-          {
-              name: "Enshrouded Server",
-              saveDirectory: "./savegame",
-              logDirectory: "./logs",
-              ip: "0.0.0.0",
-              queryPort: 15637,
-              slotCount: 16,
-              voiceChatMode: "Proximity",
-              enableVoiceChat: false,
-              enableTextChat: false,
-              gameSettingsPreset: "Default",
-              userGroups: [
-                  group("Admin"; $admin; true; true; true; true; true),
-                  group("Friend"; $friend; false; true; true; true; false),
-                  group("Guest"; $guest; false; false; true; false; false),
-                  group("Visitor"; $visitor; false; false; false; false; false)
-              ]
-          }' > "$SEED"
+      jq --arg admin "$(random_password)" --arg friend "$(random_password)" \
+          --arg guest "$(random_password)" --arg visitor "$(random_password)" \
+          '.userGroups[0].password = $admin | .userGroups[1].password = $friend
+          | .userGroups[2].password = $guest | .userGroups[3].password = $visitor' \
+          "$SEED_TMP" > "$SEED"
+      rm -f "$SEED_TMP"
 
       if [[ ! -f "$CONFIG" ]]; then
           echo "Creating enshrouded_server.json"

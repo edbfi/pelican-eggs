@@ -1,4 +1,5 @@
-"""Reject behavioral drift between the Pelican and Pterodactyl export of each egg."""
+"""Reject behavioral drift between the Pelican and Pterodactyl export of each egg,
+and between the Enshrouded egg and the config seed its installer downloads."""
 import json
 from pathlib import Path
 import re
@@ -74,8 +75,23 @@ def check(directory, pelican_name, pterodactyl_name, differences):
     assert pelican["config"]["stop"] == pterodactyl["config"]["stop"], f"{directory}: stop"
 
 
+def check_enshrouded_seed():
+    """Every key the egg writes must exist in the seed, so Wings keeps its JSON type."""
+    root = Path("games-steamcmd/enshrouded")
+    egg = yaml.safe_load((root / "egg-enshrouded.yaml").read_text())
+    seed = json.loads((root / "enshrouded_server.json").read_text())
+    assert [group["name"] for group in seed["userGroups"]] == ["Admin", "Friend", "Guest", "Visitor"]
+    assert all(group["password"] == "" for group in seed["userGroups"]), "seed passwords must be blank"
+    for key in config(egg["config"]["files"])["enshrouded_server.json"]["find"]:
+        value = seed
+        for part in key.split("."):
+            value = value[int(part)] if isinstance(value, list) else value.get(part)
+            assert value is not None, f"enshrouded: seed lacks {key}"
+
+
 for directory, (pelican_name, pterodactyl_name, differences) in PAIRS.items():
     check(directory, pelican_name, pterodactyl_name, differences)
 assert "ini-merge.sh" in yaml.safe_load(
     Path("games-steamcmd/humanitz/egg-humanitz.yaml").read_text())["file_denylist"]
-print(f"Pelican/Pterodactyl behavioral parity passed for {len(PAIRS)} eggs")
+check_enshrouded_seed()
+print(f"Pelican/Pterodactyl behavioral parity passed for {len(PAIRS)} eggs; Enshrouded seed matches")
