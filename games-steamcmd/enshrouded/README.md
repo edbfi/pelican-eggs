@@ -63,19 +63,28 @@ The server has a single port, `queryPort`. The egg sets it to the server's prima
 | Category | Variable | `enshrouded_server.json` |
 |---|---|---|
 | Server | Server Name, Max Players (1–16), Difficulty Preset | `name`, `slotCount`, `gameSettingsPreset` |
-| Access | Admin, Friend, Guest and Visitor Password | `userGroups[0..3].password` |
+| Admin, Friend, Guest, Visitor | Password, Kick / Ban Players, Access Inventories, Edit World, Edit Bases, Extend Bases, Reserved Slots (one section per group) | `userGroups[0..3].password`, `canKickBan`, `canAccessInventories`, `canEditWorld`, `canEditBase`, `canExtendBase`, `reservedSlots` |
 | Chat | Text Chat, Voice Chat, Voice Chat Mode | `enableTextChat`, `enableVoiceChat`, `voiceChatMode` |
 | Steam | Auto Update, Validate Files | – (SteamCMD on start) |
 
 The passwords are required and have no default, so every server gets its own. A password must not consist of digits only: Pterodactyl's Wings would write it as a JSON number.
 
-Give players the Friend password for the usual permissions (build and use containers). The group permissions are documented in the readme that ships with the server.
+Each group has five permission toggles and a reserved-slot count, pre-filled from the shipped [`enshrouded_server.json`](enshrouded_server.json) seed:
+
+| Group | Kick / ban | Access inventories | Edit world | Edit bases | Extend bases | Reserved slots |
+|---|---|---|---|---|---|---|
+| Admin | On | On | On | On | On | 0 |
+| Friend | Off | On | On | On | Off | 0 |
+| Guest | Off | Off | On | Off | Off | 0 |
+| Visitor | Off | Off | Off | Off | Off | 0 |
+
+Give players the Friend password for the default building and container permissions, or adjust its toggles to suit your server. Extend Bases controls placing, upgrading and removing Flame Altars. Reserved slots keep room for that group when other groups fill the server; keep the total across all groups at or below Max Players. The group permissions are documented in the readme that ships with the server and the [server roles guide](https://enshrouded.zendesk.com/hc/en-us/articles/19191581489309-Server-Roles-Configuration).
 
 ## Config
 
-`enshrouded_server.json` lives in the server root. Wings writes the panel values into it before every start, and the server then rewrites the file with its full current layout. Everything the panel does not manage stays editable and is kept: `gameSettings` (used when the preset is `Custom`), `tags`, the group permissions and reserved slots, further groups after the first four, and `bannedAccounts`. Edit the file while the server is stopped; the server rewrites it on start and when a player is banned.
+`enshrouded_server.json` lives in the server root. Wings writes the panel values into it before every start, and the server then rewrites the file with its full current layout. Set the first four groups' passwords, permissions and reserved slots in the panel: file edits to those fields are overwritten on start. Everything the panel does not manage stays editable and is kept: `gameSettings` (used when the preset is `Custom`), `tags`, further groups after the first four, and `bannedAccounts`. Edit the file while the server is stopped; the server rewrites it on start and when a player is banned.
 
-The panel sets the group passwords by position, so the first four `userGroups` must stay Admin, Friend, Guest and Visitor in that order.
+The panel sets the group options by position, so the first four `userGroups` must stay Admin, Friend, Guest and Visitor in that order. Updating an existing egg adds the new options at their defaults; copy any customized permissions or reserved slots from your config into the panel before the next start.
 
 ### Install and reinstall
 
@@ -105,8 +114,10 @@ Enshrouded 1.0 needs GE-Proton 11 for Steamworks (`SteamUtils011`); with GE-Prot
 
 `egg-pterodactyl-enshrouded.json` is this egg converted with [Scramble](https://redthirten.github.io/scramble-egg-converter/), plus two changes for Pterodactyl's Wings:
 
-- Array elements use its `userGroups[0].password` syntax.
+- Array elements use its `userGroups[0].password` syntax for all group settings.
 - The Text Chat and Voice Chat toggles are left out. Pterodactyl's Wings can only write a variable as a string or a number, and the server resets a non-boolean chat setting to `false`. Set `enableTextChat` and `enableVoiceChat` in the file instead.
+
+The startup command converts the first four groups' five permission fields from Wings' `0`/`1` values into JSON booleans before launching the game. This runs in both exports and preserves native booleans as well as unrelated settings and additional groups. It uses Python 3, which is included in the Proton image; a failed conversion stops startup.
 
 ## Egg updates
 

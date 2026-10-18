@@ -82,7 +82,20 @@ def check_enshrouded_seed():
     seed = json.loads((root / "enshrouded_server.json").read_text())
     assert [group["name"] for group in seed["userGroups"]] == ["Admin", "Friend", "Guest", "Visitor"]
     assert all(group["password"] == "" for group in seed["userGroups"]), "seed passwords must be blank"
-    for key in config(egg["config"]["files"])["enshrouded_server.json"]["find"]:
+    find = config(egg["config"]["files"])["enshrouded_server.json"]["find"]
+    options = {variable["env_variable"]: variable for variable in egg["variables"]}
+    for index, group in enumerate(seed["userGroups"]):
+        for field, default in group.items():
+            if field in {"name", "password"}:
+                continue
+            key = f"userGroups.{index}.{field}"
+            reference = re.fullmatch(r"\{\{server.environment.(\w+)\}\}", find[key])
+            assert reference, f"enshrouded: {key} must reference a panel variable"
+            variable = options[reference[1]]
+            assert str(variable["default_value"]) == str(int(default)), f"enshrouded: {key} default differs from seed"
+            expected_rule = "boolean" if isinstance(default, bool) else "integer"
+            assert expected_rule in variable["rules"], f"enshrouded: {key} has the wrong validation type"
+    for key in find:
         value = seed
         for part in key.split("."):
             value = value[int(part)] if isinstance(value, list) else value.get(part)
