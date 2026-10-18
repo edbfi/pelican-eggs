@@ -12,7 +12,7 @@ PAIRS = {
     "icarus-proton": ("egg-icarus-proton.yaml", "egg-pterodactyl-icarus-proton.json", {}),
     # Pterodactyl's Wings indexes arrays as key[N] and cannot write a variable as a JSON
     # boolean, so its export omits the chat toggles and converts group permissions at startup
-    # (games-steamcmd/enshrouded/README.md).
+    # (games-steamcmd/enshrouded/MAINTENANCE.md, "Pterodactyl compatibility").
     "enshrouded": ("egg-enshrouded.yaml", "egg-pterodactyl-enshrouded.json", {
         "find": {"enableTextChat", "enableVoiceChat"},
         "variables": {"ENABLE_TEXT_CHAT", "ENABLE_VOICE_CHAT"},

@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Check that the current Enshrouded server build still has the enshrouded_server.json keys the
-# egg manages (games-steamcmd/enshrouded/README.md, "New game releases"). The depot ships no
-# config: this installs the public build with SteamCMD, starts it once under the egg's Proton
-# image without a config, checks the file it generates and writes it with the group passwords
-# blanked, for reading alongside the shipped enshrouded_server_readme.txt.
+# egg manages (games-steamcmd/enshrouded/MAINTENANCE.md, "Checking new game releases").
+# The depot ships no config: this installs the public build with SteamCMD, starts it once
+# under the egg's Proton image without a config, checks the file it generates and writes it
+# with the group passwords blanked, for reading alongside the shipped enshrouded_server_readme.txt.
 # Needs Docker on an x86_64 Linux host and about 10 GB in WORK_DIR. Publishes no ports.
 # Usage: scripts/enshrouded-config-check.sh OUTPUT_JSON [WORK_DIR]
 set -euo pipefail

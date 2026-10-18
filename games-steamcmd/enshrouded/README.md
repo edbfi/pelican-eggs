@@ -22,7 +22,7 @@ Keep the first four groups in this order: Admin, Friend, Guest, Visitor. Give pl
 
 ## Notes
 
-- Requires GE-Proton 11 or newer.
+- Enshrouded 1.0 requires GE-Proton 11 for Steamworks support.
 - Pterodactyl: set `enableTextChat` and `enableVoiceChat` directly in the config file.
 - Migrating from the upstream egg: back up `savegame/`, update the egg, then reinstall once.
 - When updating an existing egg, copy customized group permissions and reserved slots into the panel before the next start.
