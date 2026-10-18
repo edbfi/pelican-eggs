@@ -1,52 +1,35 @@
 # HumanitZ
 
+Runs the native Linux dedicated server for HumanitZ.
 
-## [Documentation](https://store.steampowered.com/app/2728330/HZ_SERVER)
+[Pelican egg](egg-humanitz.yaml) · [Pterodactyl egg](egg-pterodactyl-humanitz.json) · [Installation and updates](../../README.md#installation)
 
+## Ports
 
-HumanitZ is a co-op, isometric, open world survival game in a world ended by the zombie outbreak. As one of the few human survivors, try to last as long as “humanly” possible. The past can’t be changed, but you can make a difference today for the future of humanity.
+| Port | Default | Protocol |
+|------|---------|----------|
+| Game | 7777 | UDP |
+| Query | 27015 | UDP |
+| RCON (optional) | 8888 | TCP |
 
-## Install notes
+Use the primary allocation for the game port. Add an allocation matching `QUERY_PORT`, and one matching `RCON_PORT` if RCON is enabled.
 
-The current version of the server software is slightly buggy. The only official documentation is the [Private Server Hosting Setup](https://humanitz.wiki.gg/wiki/Private_Server_Hosting_Setup) guide on the official HumanitZ wiki.
+## Configuration
 
-They include a `README.txt` file with the server software, that includes a description of most of the variables, but not more than that. This is only obtainable via the SteamCMD tool.
+Set server identity, passwords, player limits and RCON options in the panel. Keep the default Steam beta branch, `linuxbranch`, for the Linux server.
 
-## Installation/System Requirements
+For advanced settings, stop the server and edit `HumanitZServer/GameServerSettings.ini`. Panel-managed keys are overwritten on startup; other settings are preserved.
 
-Requires a 64-bit processor and operating system
+The included `REF_GameServerSettings.ini` lists the available settings. The egg's merge helper adds missing keys from that reference on startup and reinstall, preserving existing values and custom keys.
 
-## Server Ports
+## Notes
 
-Ports required to run the server in a table format.
+- Requires a 64-bit Linux host.
+- Upgrading an existing server to this egg: back up configs and saves, update the egg, then reinstall once to install the merge helper. Fresh installs need no extra steps.
+- RCON is disabled by default. Set a password before enabling it.
 
-| Port         | default |
-|--------------|---------|
-| Game  Port   | 7777    |
-| Query Port   | 27015   |
+## Documentation
 
-### Notes
+[Private server hosting guide](https://humanitz.wiki.gg/wiki/Private_Server_Hosting_Setup)
 
-7777 is the default port, but any port can be used.
-
-## Egg notes for panel admins
-
-This egg exposes only a **curated core** of `GameServerSettings.ini` as panel variables: server identity, access, RCON, and the Steam install/update controls. The full config still ships: the game depot includes `REF_GameServerSettings.ini` (the upstream reference with every setting at its default), and Wings' `ini` parser overwrites only the declared keys on each boot while preserving everything else.
-
-**Editing advanced settings:** open the server → **Files** → edit `HumanitZServer/GameServerSettings.ini` and restart. Undeclared keys persist across restarts and reinstalls.
-
-### Keeping configs current across game updates
-
-The installer fetches the repository-maintained `ini-merge.sh` helper, which runs on every boot (and on install/reinstall). It adds only keys that exist in `REF_GameServerSettings.ini` but are missing from your live config, using the reference default. Existing keys, including your edits and custom keys, are never touched. So new settings from a SteamCMD update appear automatically at their upstream default, ready to tweak, and nothing you changed is lost.
-
-**Upgrading an existing server to this egg:** import/update the egg in the panel, then **reinstall the server once** so the helper script is written and the new startup command takes effect. A reinstall re-runs SteamCMD over the existing files and normally leaves your `GameServerSettings.ini` and saves intact, but **back up your world/save files first** as a precaution. Fresh installs need no extra steps.
-
-### Egg updates
-
-The Pelican export's `update_url` points at `egg-humanitz.yaml` on `main`. Pelican checks it daily and shows an **Update** button when the file differs from the egg in your panel. Updating overwrites any panel-side edits to the egg. Set the same URL under **Admin → Eggs → HumanitZ → Update URL**, otherwise the next export from your panel writes `null` back.
-
-### Repository download URL
-
-Both exports now download `ini-merge.sh` from `edbfi/pelican-eggs`. Update the egg
-in your source panel too, so a later export retains this URL. Existing server
-files are unchanged until you apply the updated egg and reinstall as described above.
+The installed `README.txt` describes most server variables.
