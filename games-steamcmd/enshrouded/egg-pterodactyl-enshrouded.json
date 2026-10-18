@@ -4,10 +4,10 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2026-10-17T23:43:35+00:00",
+    "exported_at": "2026-10-18T12:50:24+00:00",
     "name": "Enshrouded (Proton)",
     "author": "326875205+edbfi@users.noreply.github.com",
-    "description": "Enshrouded is a game of survival, crafting and Action RPG combat on a voxel-based continent. This egg runs the Windows dedicated server under GE-Proton and manages the 1.0 enshrouded_server.json: server identity, difficulty preset, chat and the passwords of the four standard user groups.",
+    "description": "Enshrouded is a game of survival, crafting and Action RPG combat on a voxel-based continent. This egg runs the Windows dedicated server under GE-Proton and manages the 1.0 enshrouded_server.json: server identity, difficulty preset, chat, and passwords, permissions and reserved slots for each standard user group.",
     "features": [
         "steam_disk_space"
     ],
@@ -15,16 +15,16 @@
         "GE-Proton Latest": "ghcr.io\/pelican-eggs\/steamcmd:proton"
     },
     "file_denylist": [],
-    "startup": "trap '' INT; proton runinprefix .\/enshrouded_server.exe & ENS_PID=$!; tail -c0 -F .\/logs\/enshrouded_server.log --pid=$ENS_PID; wait $ENS_PID",
+    "startup": "python3 -c 'import json,pathlib; p=pathlib.Path(\"enshrouded_server.json\"); c=json.loads(p.read_text()); [g.update({k: bool(int(g[k])) for k in (\"canKickBan\", \"canAccessInventories\", \"canEditWorld\", \"canEditBase\", \"canExtendBase\")}) for g in c[\"userGroups\"][:4]]; p.write_text(json.dumps(c,indent=4)+\"\\n\")' || exit 1; trap '' INT; proton runinprefix .\/enshrouded_server.exe & ENS_PID=$!; tail -c0 -F .\/logs\/enshrouded_server.log --pid=$ENS_PID; wait $ENS_PID",
     "config": {
-        "files": "{\n    \"enshrouded_server.json\": {\n        \"parser\": \"json\",\n        \"find\": {\n            \"name\": \"{{server.build.env.SERVER_NAME}}\",\n            \"queryPort\": \"{{server.build.default.port}}\",\n            \"slotCount\": \"{{server.build.env.MAX_PLAYERS}}\",\n            \"gameSettingsPreset\": \"{{server.build.env.GAME_SETTINGS_PRESET}}\",\n            \"voiceChatMode\": \"{{server.build.env.VOICE_CHAT_MODE}}\",\n            \"userGroups[0].password\": \"{{server.build.env.ADMIN_PASSWORD}}\",\n            \"userGroups[1].password\": \"{{server.build.env.FRIEND_PASSWORD}}\",\n            \"userGroups[2].password\": \"{{server.build.env.GUEST_PASSWORD}}\",\n            \"userGroups[3].password\": \"{{server.build.env.VISITOR_PASSWORD}}\"\n        }\n    }\n}",
+        "files": "{\n    \"enshrouded_server.json\": {\n        \"parser\": \"json\",\n        \"find\": {\n            \"name\": \"{{server.build.env.SERVER_NAME}}\",\n            \"queryPort\": \"{{server.build.default.port}}\",\n            \"slotCount\": \"{{server.build.env.MAX_PLAYERS}}\",\n            \"gameSettingsPreset\": \"{{server.build.env.GAME_SETTINGS_PRESET}}\",\n            \"voiceChatMode\": \"{{server.build.env.VOICE_CHAT_MODE}}\",\n            \"userGroups[0].password\": \"{{server.build.env.ADMIN_PASSWORD}}\",\n            \"userGroups[0].canKickBan\": \"{{server.build.env.ADMIN_CAN_KICK_BAN}}\",\n            \"userGroups[0].canAccessInventories\": \"{{server.build.env.ADMIN_CAN_ACCESS_INVENTORIES}}\",\n            \"userGroups[0].canEditWorld\": \"{{server.build.env.ADMIN_CAN_EDIT_WORLD}}\",\n            \"userGroups[0].canEditBase\": \"{{server.build.env.ADMIN_CAN_EDIT_BASE}}\",\n            \"userGroups[0].canExtendBase\": \"{{server.build.env.ADMIN_CAN_EXTEND_BASE}}\",\n            \"userGroups[0].reservedSlots\": \"{{server.build.env.ADMIN_RESERVED_SLOTS}}\",\n            \"userGroups[1].password\": \"{{server.build.env.FRIEND_PASSWORD}}\",\n            \"userGroups[1].canKickBan\": \"{{server.build.env.FRIEND_CAN_KICK_BAN}}\",\n            \"userGroups[1].canAccessInventories\": \"{{server.build.env.FRIEND_CAN_ACCESS_INVENTORIES}}\",\n            \"userGroups[1].canEditWorld\": \"{{server.build.env.FRIEND_CAN_EDIT_WORLD}}\",\n            \"userGroups[1].canEditBase\": \"{{server.build.env.FRIEND_CAN_EDIT_BASE}}\",\n            \"userGroups[1].canExtendBase\": \"{{server.build.env.FRIEND_CAN_EXTEND_BASE}}\",\n            \"userGroups[1].reservedSlots\": \"{{server.build.env.FRIEND_RESERVED_SLOTS}}\",\n            \"userGroups[2].password\": \"{{server.build.env.GUEST_PASSWORD}}\",\n            \"userGroups[2].canKickBan\": \"{{server.build.env.GUEST_CAN_KICK_BAN}}\",\n            \"userGroups[2].canAccessInventories\": \"{{server.build.env.GUEST_CAN_ACCESS_INVENTORIES}}\",\n            \"userGroups[2].canEditWorld\": \"{{server.build.env.GUEST_CAN_EDIT_WORLD}}\",\n            \"userGroups[2].canEditBase\": \"{{server.build.env.GUEST_CAN_EDIT_BASE}}\",\n            \"userGroups[2].canExtendBase\": \"{{server.build.env.GUEST_CAN_EXTEND_BASE}}\",\n            \"userGroups[2].reservedSlots\": \"{{server.build.env.GUEST_RESERVED_SLOTS}}\",\n            \"userGroups[3].password\": \"{{server.build.env.VISITOR_PASSWORD}}\",\n            \"userGroups[3].canKickBan\": \"{{server.build.env.VISITOR_CAN_KICK_BAN}}\",\n            \"userGroups[3].canAccessInventories\": \"{{server.build.env.VISITOR_CAN_ACCESS_INVENTORIES}}\",\n            \"userGroups[3].canEditWorld\": \"{{server.build.env.VISITOR_CAN_EDIT_WORLD}}\",\n            \"userGroups[3].canEditBase\": \"{{server.build.env.VISITOR_CAN_EDIT_BASE}}\",\n            \"userGroups[3].canExtendBase\": \"{{server.build.env.VISITOR_CAN_EXTEND_BASE}}\",\n            \"userGroups[3].reservedSlots\": \"{{server.build.env.VISITOR_RESERVED_SLOTS}}\"\n        }\n    }\n}",
         "startup": "{\n    \"done\": \"[Session] 'HostOnline' (up)!\"\n}",
         "logs": "{}",
         "stop": "^C"
     },
     "scripts": {
         "installation": {
-            "script": "#!\/bin\/bash\n# Enshrouded dedicated server (Windows build, run under GE-Proton)\n#\n# Server Files: \/mnt\/server\n# Image to install with is 'ghcr.io\/pelican-eggs\/installers:debian'\n\n## just in case someone removed the defaults.\nif [[ \"${STEAM_USER}\" == \"\" ]] || [[ \"${STEAM_PASS}\" == \"\" ]]; then\n    echo -e \"steam user is not set.\\n\"\n    echo -e \"Using anonymous user.\\n\"\n    STEAM_USER=anonymous\n    STEAM_PASS=\"\"\n    STEAM_AUTH=\"\"\nelse\n    echo -e \"user set to ${STEAM_USER}\"\nfi\n\n## download and install steamcmd\ncd \/tmp\nmkdir -p \/mnt\/server\/steamcmd\ncurl -sSL -o steamcmd.tar.gz https:\/\/steamcdn-a.akamaihd.net\/client\/installer\/steamcmd_linux.tar.gz\ntar -xzvf steamcmd.tar.gz -C \/mnt\/server\/steamcmd\nmkdir -p \/mnt\/server\/steamapps # Fix steamcmd disk write error when this folder is missing\ncd \/mnt\/server\/steamcmd\n\n# SteamCMD fails otherwise for some reason, even running as root.\n# This is changed at the end of the install process anyways.\nchown -R root:root \/mnt\nexport HOME=\/mnt\/server\n\n## install game using steamcmd\n## The platform override goes before +login. A fresh SteamCMD can still fail its first\n## app_update with \"Missing configuration\", so retry until the server binary exists.\nfor attempt in 1 2 3; do\n    .\/steamcmd.sh $( [[ \"${WINDOWS_INSTALL}\" == \"1\" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) +force_install_dir \/mnt\/server +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} +app_update ${SRCDS_APPID} validate +quit\n    [[ -f \/mnt\/server\/enshrouded_server.exe ]] && break\n    echo \"SteamCMD attempt ${attempt} did not install enshrouded_server.exe\"\ndone\nif [[ ! -f \/mnt\/server\/enshrouded_server.exe ]]; then\n    echo \"SteamCMD failed to install the Enshrouded server\"\n    exit 1\nfi\n\n## set up 32 bit libraries\nmkdir -p \/mnt\/server\/.steam\/sdk32\ncp -v linux32\/steamclient.so ..\/.steam\/sdk32\/steamclient.so\n\n## set up 64 bit libraries\n## Proton's lsteamclient bridge loads this; without it the server hangs before writing a log.\nmkdir -p \/mnt\/server\/.steam\/sdk64\ncp -v linux64\/steamclient.so ..\/.steam\/sdk64\/steamclient.so\n\n## enshrouded_server.json\n## The server writes its full, current settings into this file on every start, adding any\n## it is missing. So the installer only seeds the keys the panel manages, with their JSON\n## types, and the four standard groups. The panel sets the group passwords by position:\n## userGroups 0-3 must stay Admin, Friend, Guest and Visitor.\nCONFIG=\/mnt\/server\/enshrouded_server.json\nSTANDARD_GROUPS='[\"Admin\",\"Friend\",\"Guest\",\"Visitor\"]'\n\n## fetch the seed maintained alongside this egg.\nSEED_TMP=\"$(mktemp)\" || { echo \"Failed to create a temporary file for the enshrouded_server.json seed\"; exit 1; }\nif ! curl -fsSL --retry 3 -o \"$SEED_TMP\" https:\/\/raw.githubusercontent.com\/edbfi\/pelican-eggs\/refs\/heads\/main\/games-steamcmd\/enshrouded\/enshrouded_server.json \\\n    || ! jq -e --argjson groups \"$STANDARD_GROUPS\" '[.userGroups[].name] == $groups' \"$SEED_TMP\" > \/dev\/null; then\n    echo \"Failed to download a valid enshrouded_server.json seed\"\n    rm -f \"$SEED_TMP\"\n    exit 1\nfi\n\n## Random passwords until the panel writes its own on the first start.\nrandom_password() { tr -dc 'A-Za-z0-9' < \/dev\/urandom | head -c 24; }\nSEED=\"$(mktemp)\" || { echo \"Failed to create a temporary file\"; exit 1; }\njq --arg admin \"$(random_password)\" --arg friend \"$(random_password)\" \\\n    --arg guest \"$(random_password)\" --arg visitor \"$(random_password)\" \\\n    '.userGroups[0].password = $admin | .userGroups[1].password = $friend\n    | .userGroups[2].password = $guest | .userGroups[3].password = $visitor' \\\n    \"$SEED_TMP\" > \"$SEED\"\nrm -f \"$SEED_TMP\"\n\nif [[ ! -f \"$CONFIG\" ]]; then\n    echo \"Creating enshrouded_server.json\"\n    cp \"$SEED\" \"$CONFIG\"\nelif jq -e --argjson groups \"$STANDARD_GROUPS\" '[.userGroups[:4][].name] == $groups' \"$CONFIG\" > \/dev\/null 2>&1; then\n    echo \"Keeping the existing enshrouded_server.json\"\nelse\n    ## Legacy layout, e.g. a single \"Default\" group migrated from a top-level password.\n    BACKUP=\"${CONFIG}.$(date +%Y%m%d-%H%M%S).bak\"\n    cp \"$CONFIG\" \"$BACKUP\"\n    echo \"enshrouded_server.json lacks the standard user groups; backed up to ${BACKUP}\"\n    ## Keep its settings, tags and bans; put the standard groups first and any others after them.\n    if jq --slurpfile old \"$BACKUP\" --argjson groups \"$STANDARD_GROUPS\" '\n            $old[0] as $o\n            | . * ($o | del(.userGroups, .password, .gamePort))\n            | .userGroups += [($o.userGroups \/\/ [])[] | select(.name as $n | $groups | index($n) | not)]\n        ' \"$SEED\" > \"$CONFIG\"; then\n        echo \"Merged the existing settings into the current layout\"\n    else\n        echo \"The existing file is not valid JSON; starting from the seed\"\n        cp \"$SEED\" \"$CONFIG\"\n    fi\nfi\nrm -f \"$SEED\"\n\n## install end\necho \"-----------------------------------------\"\necho \"Installation completed...\"\necho \"-----------------------------------------\"",
+            "script": "#!\/bin\/bash\n# Enshrouded dedicated server (Windows build, run under GE-Proton)\n#\n# Server Files: \/mnt\/server\n# Image to install with is 'ghcr.io\/pelican-eggs\/installers:debian'\n\n## just in case someone removed the defaults.\nif [[ \"${STEAM_USER}\" == \"\" ]] || [[ \"${STEAM_PASS}\" == \"\" ]]; then\n    echo -e \"steam user is not set.\\n\"\n    echo -e \"Using anonymous user.\\n\"\n    STEAM_USER=anonymous\n    STEAM_PASS=\"\"\n    STEAM_AUTH=\"\"\nelse\n    echo -e \"user set to ${STEAM_USER}\"\nfi\n\n## download and install steamcmd\ncd \/tmp\nmkdir -p \/mnt\/server\/steamcmd\ncurl -sSL -o steamcmd.tar.gz https:\/\/steamcdn-a.akamaihd.net\/client\/installer\/steamcmd_linux.tar.gz\ntar -xzvf steamcmd.tar.gz -C \/mnt\/server\/steamcmd\nmkdir -p \/mnt\/server\/steamapps # Fix steamcmd disk write error when this folder is missing\ncd \/mnt\/server\/steamcmd\n\n# SteamCMD fails otherwise for some reason, even running as root.\n# This is changed at the end of the install process anyways.\nchown -R root:root \/mnt\nexport HOME=\/mnt\/server\n\n## install game using steamcmd\n## The platform override goes before +login. A fresh SteamCMD can still fail its first\n## app_update with \"Missing configuration\", so retry until the server binary exists.\nfor attempt in 1 2 3; do\n    .\/steamcmd.sh $( [[ \"${WINDOWS_INSTALL}\" == \"1\" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) +force_install_dir \/mnt\/server +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} +app_update ${SRCDS_APPID} validate +quit\n    [[ -f \/mnt\/server\/enshrouded_server.exe ]] && break\n    echo \"SteamCMD attempt ${attempt} did not install enshrouded_server.exe\"\ndone\nif [[ ! -f \/mnt\/server\/enshrouded_server.exe ]]; then\n    echo \"SteamCMD failed to install the Enshrouded server\"\n    exit 1\nfi\n\n## set up 32 bit libraries\nmkdir -p \/mnt\/server\/.steam\/sdk32\ncp -v linux32\/steamclient.so ..\/.steam\/sdk32\/steamclient.so\n\n## set up 64 bit libraries\n## Proton's lsteamclient bridge loads this; without it the server hangs before writing a log.\nmkdir -p \/mnt\/server\/.steam\/sdk64\ncp -v linux64\/steamclient.so ..\/.steam\/sdk64\/steamclient.so\n\n## enshrouded_server.json\n## The server writes its full, current settings into this file on every start, adding any\n## it is missing. So the installer only seeds the keys the panel manages, with their JSON\n## types, and the four standard groups. The panel sets the group options by position:\n## userGroups 0-3 must stay Admin, Friend, Guest and Visitor.\nCONFIG=\/mnt\/server\/enshrouded_server.json\nSTANDARD_GROUPS='[\"Admin\",\"Friend\",\"Guest\",\"Visitor\"]'\n\n## fetch the seed maintained alongside this egg.\nSEED_TMP=\"$(mktemp)\" || { echo \"Failed to create a temporary file for the enshrouded_server.json seed\"; exit 1; }\nif ! curl -fsSL --retry 3 -o \"$SEED_TMP\" https:\/\/raw.githubusercontent.com\/edbfi\/pelican-eggs\/refs\/heads\/main\/games-steamcmd\/enshrouded\/enshrouded_server.json \\\n    || ! jq -e --argjson groups \"$STANDARD_GROUPS\" '[.userGroups[].name] == $groups' \"$SEED_TMP\" > \/dev\/null; then\n    echo \"Failed to download a valid enshrouded_server.json seed\"\n    rm -f \"$SEED_TMP\"\n    exit 1\nfi\n\n## Random passwords until the panel writes its own on the first start.\nrandom_password() { tr -dc 'A-Za-z0-9' < \/dev\/urandom | head -c 24; }\nSEED=\"$(mktemp)\" || { echo \"Failed to create a temporary file\"; exit 1; }\njq --arg admin \"$(random_password)\" --arg friend \"$(random_password)\" \\\n    --arg guest \"$(random_password)\" --arg visitor \"$(random_password)\" \\\n    '.userGroups[0].password = $admin | .userGroups[1].password = $friend\n    | .userGroups[2].password = $guest | .userGroups[3].password = $visitor' \\\n    \"$SEED_TMP\" > \"$SEED\"\nrm -f \"$SEED_TMP\"\n\nif [[ ! -f \"$CONFIG\" ]]; then\n    echo \"Creating enshrouded_server.json\"\n    cp \"$SEED\" \"$CONFIG\"\nelif jq -e --argjson groups \"$STANDARD_GROUPS\" '[.userGroups[:4][].name] == $groups' \"$CONFIG\" > \/dev\/null 2>&1; then\n    echo \"Keeping the existing enshrouded_server.json\"\nelse\n    ## Legacy layout, e.g. a single \"Default\" group migrated from a top-level password.\n    BACKUP=\"${CONFIG}.$(date +%Y%m%d-%H%M%S).bak\"\n    cp \"$CONFIG\" \"$BACKUP\"\n    echo \"enshrouded_server.json lacks the standard user groups; backed up to ${BACKUP}\"\n    ## Keep its settings, tags and bans; put the standard groups first and any others after them.\n    if jq --slurpfile old \"$BACKUP\" --argjson groups \"$STANDARD_GROUPS\" '\n            $old[0] as $o\n            | . * ($o | del(.userGroups, .password, .gamePort))\n            | .userGroups += [($o.userGroups \/\/ [])[] | select(.name as $n | $groups | index($n) | not)]\n        ' \"$SEED\" > \"$CONFIG\"; then\n        echo \"Merged the existing settings into the current layout\"\n    else\n        echo \"The existing file is not valid JSON; starting from the seed\"\n        cp \"$SEED\" \"$CONFIG\"\n    fi\nfi\nrm -f \"$SEED\"\n\n## install end\necho \"-----------------------------------------\"\necho \"Installation completed...\"\necho \"-----------------------------------------\"",
             "container": "ghcr.io\/pelican-eggs\/installers:debian",
             "entrypoint": "bash"
         }
@@ -61,8 +61,8 @@
             "field_type": "text"
         },
         {
-            "name": "[Access] Admin Password",
-            "description": "Password of the Admin group (userGroups[0]): build, extend bases, use containers, kick and ban.",
+            "name": "[Admin] Password",
+            "description": "Password for the Admin group (userGroups[0].password). Players receive this group's configured permissions when they join with this password.",
             "env_variable": "ADMIN_PASSWORD",
             "default_value": "",
             "user_viewable": true,
@@ -71,8 +71,68 @@
             "field_type": "text"
         },
         {
-            "name": "[Access] Friend Password",
-            "description": "Password of the Friend group (userGroups[1]): build in bases and use containers. Give this one to regular players.",
+            "name": "[Admin] Kick \/ Ban Players",
+            "description": "Allow kicking and banning players. Sets userGroups[0].canKickBan.",
+            "env_variable": "ADMIN_CAN_KICK_BAN",
+            "default_value": "1",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "[Admin] Access Inventories",
+            "description": "Allow using chests, containers and workstations. Sets userGroups[0].canAccessInventories.",
+            "env_variable": "ADMIN_CAN_ACCESS_INVENTORIES",
+            "default_value": "1",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "[Admin] Edit World",
+            "description": "Allow changing the world outside player bases. Sets userGroups[0].canEditWorld.",
+            "env_variable": "ADMIN_CAN_EDIT_WORLD",
+            "default_value": "1",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "[Admin] Edit Bases",
+            "description": "Allow building, removing props and terraforming inside player bases. Sets userGroups[0].canEditBase.",
+            "env_variable": "ADMIN_CAN_EDIT_BASE",
+            "default_value": "1",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "[Admin] Extend Bases",
+            "description": "Allow placing, upgrading and removing Flame Altars. Sets userGroups[0].canExtendBase.",
+            "env_variable": "ADMIN_CAN_EXTEND_BASE",
+            "default_value": "1",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "[Admin] Reserved Slots",
+            "description": "Slots reserved for the Admin group (userGroups[0].reservedSlots). Keep the total reserved across all groups at or below Max Players.",
+            "env_variable": "ADMIN_RESERVED_SLOTS",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|integer|between:0,16",
+            "field_type": "text"
+        },
+        {
+            "name": "[Friend] Password",
+            "description": "Password for the Friend group (userGroups[1].password). Players receive this group's configured permissions when they join with this password.",
             "env_variable": "FRIEND_PASSWORD",
             "default_value": "",
             "user_viewable": true,
@@ -81,8 +141,68 @@
             "field_type": "text"
         },
         {
-            "name": "[Access] Guest Password",
-            "description": "Password of the Guest group (userGroups[2]): play and edit the open world, but no base building or containers.",
+            "name": "[Friend] Kick \/ Ban Players",
+            "description": "Allow kicking and banning players. Sets userGroups[1].canKickBan.",
+            "env_variable": "FRIEND_CAN_KICK_BAN",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "[Friend] Access Inventories",
+            "description": "Allow using chests, containers and workstations. Sets userGroups[1].canAccessInventories.",
+            "env_variable": "FRIEND_CAN_ACCESS_INVENTORIES",
+            "default_value": "1",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "[Friend] Edit World",
+            "description": "Allow changing the world outside player bases. Sets userGroups[1].canEditWorld.",
+            "env_variable": "FRIEND_CAN_EDIT_WORLD",
+            "default_value": "1",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "[Friend] Edit Bases",
+            "description": "Allow building, removing props and terraforming inside player bases. Sets userGroups[1].canEditBase.",
+            "env_variable": "FRIEND_CAN_EDIT_BASE",
+            "default_value": "1",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "[Friend] Extend Bases",
+            "description": "Allow placing, upgrading and removing Flame Altars. Sets userGroups[1].canExtendBase.",
+            "env_variable": "FRIEND_CAN_EXTEND_BASE",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "[Friend] Reserved Slots",
+            "description": "Slots reserved for the Friend group (userGroups[1].reservedSlots). Keep the total reserved across all groups at or below Max Players.",
+            "env_variable": "FRIEND_RESERVED_SLOTS",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|integer|between:0,16",
+            "field_type": "text"
+        },
+        {
+            "name": "[Guest] Password",
+            "description": "Password for the Guest group (userGroups[2].password). Players receive this group's configured permissions when they join with this password.",
             "env_variable": "GUEST_PASSWORD",
             "default_value": "",
             "user_viewable": true,
@@ -91,13 +211,133 @@
             "field_type": "text"
         },
         {
-            "name": "[Access] Visitor Password",
-            "description": "Password of the Visitor group (userGroups[3]): play only, no world or base edits and no containers.",
+            "name": "[Guest] Kick \/ Ban Players",
+            "description": "Allow kicking and banning players. Sets userGroups[2].canKickBan.",
+            "env_variable": "GUEST_CAN_KICK_BAN",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "[Guest] Access Inventories",
+            "description": "Allow using chests, containers and workstations. Sets userGroups[2].canAccessInventories.",
+            "env_variable": "GUEST_CAN_ACCESS_INVENTORIES",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "[Guest] Edit World",
+            "description": "Allow changing the world outside player bases. Sets userGroups[2].canEditWorld.",
+            "env_variable": "GUEST_CAN_EDIT_WORLD",
+            "default_value": "1",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "[Guest] Edit Bases",
+            "description": "Allow building, removing props and terraforming inside player bases. Sets userGroups[2].canEditBase.",
+            "env_variable": "GUEST_CAN_EDIT_BASE",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "[Guest] Extend Bases",
+            "description": "Allow placing, upgrading and removing Flame Altars. Sets userGroups[2].canExtendBase.",
+            "env_variable": "GUEST_CAN_EXTEND_BASE",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "[Guest] Reserved Slots",
+            "description": "Slots reserved for the Guest group (userGroups[2].reservedSlots). Keep the total reserved across all groups at or below Max Players.",
+            "env_variable": "GUEST_RESERVED_SLOTS",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|integer|between:0,16",
+            "field_type": "text"
+        },
+        {
+            "name": "[Visitor] Password",
+            "description": "Password for the Visitor group (userGroups[3].password). Players receive this group's configured permissions when they join with this password.",
             "env_variable": "VISITOR_PASSWORD",
             "default_value": "",
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string|max:64|not_regex:\/^[0-9]+$\/",
+            "field_type": "text"
+        },
+        {
+            "name": "[Visitor] Kick \/ Ban Players",
+            "description": "Allow kicking and banning players. Sets userGroups[3].canKickBan.",
+            "env_variable": "VISITOR_CAN_KICK_BAN",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "[Visitor] Access Inventories",
+            "description": "Allow using chests, containers and workstations. Sets userGroups[3].canAccessInventories.",
+            "env_variable": "VISITOR_CAN_ACCESS_INVENTORIES",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "[Visitor] Edit World",
+            "description": "Allow changing the world outside player bases. Sets userGroups[3].canEditWorld.",
+            "env_variable": "VISITOR_CAN_EDIT_WORLD",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "[Visitor] Edit Bases",
+            "description": "Allow building, removing props and terraforming inside player bases. Sets userGroups[3].canEditBase.",
+            "env_variable": "VISITOR_CAN_EDIT_BASE",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "[Visitor] Extend Bases",
+            "description": "Allow placing, upgrading and removing Flame Altars. Sets userGroups[3].canExtendBase.",
+            "env_variable": "VISITOR_CAN_EXTEND_BASE",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "[Visitor] Reserved Slots",
+            "description": "Slots reserved for the Visitor group (userGroups[3].reservedSlots). Keep the total reserved across all groups at or below Max Players.",
+            "env_variable": "VISITOR_RESERVED_SLOTS",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|integer|between:0,16",
             "field_type": "text"
         },
         {

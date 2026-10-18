@@ -3,6 +3,7 @@ and between the Enshrouded egg and the config seed its installer downloads."""
 import json
 from pathlib import Path
 import re
+import shlex
 import yaml
 
 # Directory -> (Pelican export, Pterodactyl export, deliberate Pterodactyl differences).
@@ -10,11 +11,13 @@ PAIRS = {
     "humanitz": ("egg-humanitz.yaml", "egg-pterodactyl-humanitz.json", {}),
     "icarus-proton": ("egg-icarus-proton.yaml", "egg-pterodactyl-icarus-proton.json", {}),
     # Pterodactyl's Wings indexes arrays as key[N] and cannot write a variable as a JSON
-    # boolean, so its export omits the chat toggles (games-steamcmd/enshrouded/README.md).
+    # boolean, so its export omits the chat toggles and converts group permissions at startup
+    # (games-steamcmd/enshrouded/README.md).
     "enshrouded": ("egg-enshrouded.yaml", "egg-pterodactyl-enshrouded.json", {
         "find": {"enableTextChat", "enableVoiceChat"},
         "variables": {"ENABLE_TEXT_CHAT", "ENABLE_VOICE_CHAT"},
         "array_index": True,
+        "permission_conversion": True,
     }),
 }
 
@@ -64,7 +67,12 @@ def check(directory, pelican_name, pterodactyl_name, differences):
     assert expected == variables(pterodactyl), f"{directory}: variable behavior differs"
     assert pelican["scripts"] == pterodactyl["scripts"], f"{directory}: install scripts differ"
     assert (pelican["file_denylist"] or []) == pterodactyl["file_denylist"], f"{directory}: file permissions differ"
-    assert normalize(next(iter(pelican["startup_commands"].values()))) == pterodactyl["startup"], f"{directory}: startup differs"
+    startup = pterodactyl["startup"]
+    if differences.get("permission_conversion"):
+        conversion, separator, startup = startup.partition(" || exit 1; ")
+        command = shlex.split(conversion)
+        assert separator and len(command) == 3 and command[:2] == ["python3", "-c"], f"{directory}: missing permission conversion"
+    assert normalize(next(iter(pelican["startup_commands"].values()))) == startup, f"{directory}: startup differs"
     files = normalize(config(pelican["config"]["files"]), array_index)
     for parser in files.values():
         for key in differences.get("find", ()):
@@ -82,7 +90,20 @@ def check_enshrouded_seed():
     seed = json.loads((root / "enshrouded_server.json").read_text())
     assert [group["name"] for group in seed["userGroups"]] == ["Admin", "Friend", "Guest", "Visitor"]
     assert all(group["password"] == "" for group in seed["userGroups"]), "seed passwords must be blank"
-    for key in config(egg["config"]["files"])["enshrouded_server.json"]["find"]:
+    find = config(egg["config"]["files"])["enshrouded_server.json"]["find"]
+    options = {variable["env_variable"]: variable for variable in egg["variables"]}
+    for index, group in enumerate(seed["userGroups"]):
+        for field, default in group.items():
+            if field in {"name", "password"}:
+                continue
+            key = f"userGroups.{index}.{field}"
+            reference = re.fullmatch(r"\{\{server.environment.(\w+)\}\}", find[key])
+            assert reference, f"enshrouded: {key} must reference a panel variable"
+            variable = options[reference[1]]
+            assert str(variable["default_value"]) == str(int(default)), f"enshrouded: {key} default differs from seed"
+            expected_rule = "boolean" if isinstance(default, bool) else "integer"
+            assert expected_rule in variable["rules"], f"enshrouded: {key} has the wrong validation type"
+    for key in find:
         value = seed
         for part in key.split("."):
             value = value[int(part)] if isinstance(value, list) else value.get(part)
