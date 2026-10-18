@@ -1,38 +1,32 @@
 # Icarus (Proton)
 
+Runs the Windows dedicated server on Linux using GE-Proton.
 
-## [Documentation](https://github.com/RocketWerkz/IcarusDedicatedServer)
+[Pelican egg](egg-icarus-proton.yaml) · [Pterodactyl egg](egg-pterodactyl-icarus-proton.json) · [Installation and updates](../../README.md#installation)
 
+## Ports
 
-Icarus is a PvE survival game with dedicated servers. This egg runs the Windows dedicated server under GE-Proton instead of Wine.
+| Port | Default | Protocol |
+|------|---------|----------|
+| Game | 17777 | UDP |
+| Query | 27015 | UDP |
 
-## Differences from the upstream Wine egg
+Use the primary allocation for the game port. Add an allocation matching the `QUERY_PORT` panel variable.
 
-This egg is built from the upstream `pelican-eggs/games-steamcmd` Icarus egg. The install script, variables and `config` are unchanged. Only the runtime differs:
+## Configuration
 
-| | Upstream (Wine) | This egg (Proton) |
-|---|---|---|
-| Docker image | `ghcr.io/pelican-eggs/yolks:wine_latest` | `ghcr.io/pelican-eggs/steamcmd:proton` |
-| Launcher | `wine` | `xvfb-run -a proton run`, with `SteamAppId`/`SteamGameId` set to `1149460` (the Icarus game app) |
-| Save location | default | `-UserDir="Z:/home/container/Icarus"`, so saves, config and logs stay under `/home/container/Icarus/Saved` |
-| Process handling | `tail` on the log | `tail` on the log, then `wait` on the server PID |
-| `update_url` (Pelican) | upstream egg | this file on `edbfi/pelican-eggs` `main`, so a panel update cannot replace this egg with the Wine one |
+Set the server name, query port and automatic updates in the panel.
 
-## Server Ports
+For other settings, stop the server and edit `Icarus/Saved/Config/ServerSettings.ini`. The installer downloads the upstream template only when this file is missing, preserving an existing config on reinstall.
 
-| Port         | default |
-|--------------|---------|
-| Game Port    | 17777   |
-| Query Port   | 27015   |
+Saves, config and logs live under `Icarus/Saved` inside the server's files (`/home/container/Icarus/Saved` in the container).
 
-### Notes
+## Notes
 
-The game port is the server's primary allocation. The query port is set by the `QUERY_PORT` variable.
+- Uses the `ghcr.io/pelican-eggs/steamcmd:proton` runtime image.
+- The launcher sets `SteamAppId` and `SteamGameId` to `1149460` and uses `-UserDir` to keep server data in the location above.
+- This is a Proton variant of the upstream Wine egg; its install script and panel variables are unchanged.
 
-## Egg updates
+## Documentation
 
-The Pelican export's `update_url` points at `egg-icarus-proton.yaml` on `main`. Pelican checks it daily and shows an **Update** button when the file differs from the egg in your panel. Updating overwrites any panel-side edits to the egg. Set the same URL under **Admin → Eggs → Icarus (Proton) → Update URL**, otherwise the next export from your panel writes `null` back.
-
-## Config
-
-The server config is `Icarus/Saved/Config/ServerSettings.ini`. The installer fetches the upstream template from RocketWerkz only if the file does not already exist.
+[Official dedicated server guide](https://github.com/RocketWerkz/IcarusDedicatedServer)
