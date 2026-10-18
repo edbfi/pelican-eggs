@@ -73,6 +73,10 @@ if docker run --rm -i "$installer" jq -e '
         and (.voiceChatMode | type) == "string"
         and ([.userGroups[:4][].name] == ["Admin", "Friend", "Guest", "Visitor"])
         and ([.userGroups[:4][].password | type] == ["string", "string", "string", "string"])
+        and all(.userGroups[:4][];
+            (.canKickBan | type) == "boolean" and (.canAccessInventories | type) == "boolean"
+            and (.canEditWorld | type) == "boolean" and (.canEditBase | type) == "boolean"
+            and (.canExtendBase | type) == "boolean" and (.reservedSlots | type) == "number")
     ' < "$out" >/dev/null; then
     echo "Every key the egg manages is present with its expected type."
 else
