@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/pelican-eggs.svg" alt="pelican-eggs logo" width="256" height="256">
+  <img src="assets/pelican-eggs.svg" alt="pelican-eggs logo" width="160" height="160">
 </p>
 
 <h1 align="center">pelican-eggs</h1>
@@ -7,7 +7,7 @@
 <p align="center"><strong>Game-server eggs for Pelican and Pterodactyl.</strong></p>
 
 <p align="center">
-  <a href="https://github.com/edbfi/pelican-eggs/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-AGPL--3.0-blue?style=flat" alt="License: AGPL-3.0"></a>
+  <a href="https://github.com/edbfi/pelican-eggs/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-AGPL--3.0--or--later-blue?style=flat" alt="License: AGPL-3.0-or-later"></a>
   <a href="https://github.com/pelican/panel"><img src="https://img.shields.io/badge/Pelican-0F766E?style=flat" alt="Pelican"></a>
   <a href="https://github.com/pterodactyl/panel"><img src="https://img.shields.io/badge/Pterodactyl-10529F?style=flat" alt="Pterodactyl"></a>
 </p>
@@ -39,3 +39,9 @@ Follow any game-specific upgrade notes before starting existing servers. Back up
 ## README format
 
 Keep each egg README around 150–250 words: title and one-sentence description, download links, then **Ports**, **Configuration**, **Notes**, and **Documentation**. Include only setup details and essential caveats; link to separate maintenance notes for implementation details.
+
+## License
+
+Original code by edbfi is licensed under the [GNU Affero General Public License](LICENSE), version 3 or (at your option) any later version (`AGPL-3.0-or-later`).
+
+Inherited eggs and third-party components retain their original licenses and author notices, including the MIT-licensed Icarus installer.
