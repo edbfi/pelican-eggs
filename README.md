@@ -1,4 +1,16 @@
-# pelican-eggs
+<p align="center">
+  <img src="assets/pelican-eggs.svg" alt="pelican-eggs logo" width="256" height="256">
+</p>
+
+<h1 align="center">pelican-eggs</h1>
+
+<p align="center"><strong>Game-server eggs for Pelican and Pterodactyl.</strong></p>
+
+<p align="center">
+  <a href="https://github.com/edbfi/pelican-eggs/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-AGPL--3.0-blue?style=flat" alt="License: AGPL-3.0"></a>
+  <a href="https://github.com/pelican/panel"><img src="https://img.shields.io/badge/Pelican-0F766E?style=flat" alt="Pelican"></a>
+  <a href="https://github.com/pterodactyl/panel"><img src="https://img.shields.io/badge/Pterodactyl-10529F?style=flat" alt="Pterodactyl"></a>
+</p>
 
 My personal collection of game-server eggs for [Pelican](https://pelican.dev) and Pterodactyl.
 

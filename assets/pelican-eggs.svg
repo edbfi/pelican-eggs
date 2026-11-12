@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">pelican-eggs</title>
+  <desc id="desc">Three eggs with server slots and status lights.</desc>
+  <g stroke="#163544" stroke-width="4" stroke-linejoin="round">
+    <path fill="#a5d8e6" d="M70 70c-20 0-46 48-46 79 0 29 19 47 46 47s46-18 46-47c0-31-26-79-46-79Z"/>
+    <path fill="#a5d8e6" d="M186 70c-20 0-46 48-46 79 0 29 19 47 46 47s46-18 46-47c0-31-26-79-46-79Z"/>
+    <path fill="#e1f5ee" d="M128 38c-26 0-59 64-59 105 0 38 24 62 59 62s59-24 59-62c0-41-33-105-59-105Z"/>
+  </g>
+  <g fill="#163544">
+    <rect x="39" y="135" width="24" height="10" rx="5"/>
+    <rect x="39" y="155" width="24" height="10" rx="5"/>
+    <rect x="193" y="135" width="24" height="10" rx="5"/>
+    <rect x="193" y="155" width="24" height="10" rx="5"/>
+    <rect x="92" y="116" width="72" height="20" rx="6"/>
+    <rect x="92" y="148" width="72" height="20" rx="6"/>
+  </g>
+  <g fill="#61d7b5">
+    <circle cx="152" cy="126" r="3"/>
+    <circle cx="152" cy="158" r="3"/>
+  </g>
+  <g stroke="#e1f5ee" stroke-width="3" stroke-linecap="round">
+    <path d="M103 126h30m-30 32h30"/>
+  </g>
+</svg>
