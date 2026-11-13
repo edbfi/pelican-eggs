@@ -10,6 +10,7 @@
   <a href="https://github.com/edbfi/pelican-eggs/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-AGPL--3.0--or--later-blue?style=flat" alt="License: AGPL-3.0-or-later"></a>
   <a href="https://github.com/pelican/panel"><img src="https://img.shields.io/badge/Pelican-0F766E?style=flat" alt="Pelican"></a>
   <a href="https://github.com/pterodactyl/panel"><img src="https://img.shields.io/badge/Pterodactyl-10529F?style=flat" alt="Pterodactyl"></a>
+  <a href="https://github.com/edbfi/pelican-eggs/actions/workflows/ci.yml?query=branch%3Amain"><img src="https://img.shields.io/github/actions/workflow/status/edbfi/pelican-eggs/ci.yml?branch=main&amp;event=push&amp;label=CI&amp;style=flat" alt="CI"></a>
 </p>
 
 My personal collection of game-server eggs for [Pelican](https://pelican.dev) and Pterodactyl.
